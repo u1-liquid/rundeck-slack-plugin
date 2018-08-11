@@ -53,7 +53,9 @@ public class SlackNotificationPlugin implements NotificationPlugin {
 
     private static final String SLACK_MESSAGE_FROM_NAME = "Rundeck";
 //    private static final String SLACK_EXT_MESSAGE_TEMPLATE_PATH = "/var/lib/rundeck/libext/templates";
-    private static final String SLACK_MESSAGE_TEMPLATE = "slack-incoming-message.ftl";
+    private static final String SLACK_MESSAGE_TEMPLATE_SUCCESS = "slack-template-success.ftl";
+    private static final String SLACK_MESSAGE_TEMPLATE_FAILED = "slack-template-error.ftl";
+    private static final String SLACK_MESSAGE_TEMPLATE_STARTED = "slack-template-started.ftl";
 
     private static final String TRIGGER_START = "start";
     private static final String TRIGGER_SUCCESS = "success";
@@ -96,12 +98,12 @@ public class SlackNotificationPlugin implements NotificationPlugin {
             TemplateLoader[] loaders = new TemplateLoader[]{builtInTemplate};
             MultiTemplateLoader mtl = new MultiTemplateLoader(loaders);
             FREEMARKER_CFG.setTemplateLoader(mtl);
-            ACTUAL_SLACK_TEMPLATE = SLACK_MESSAGE_TEMPLATE;
+            //ACTUAL_SLACK_TEMPLATE = SLACK_MESSAGE_TEMPLATE;
 //        }
 
-        TRIGGER_NOTIFICATION_DATA.put(TRIGGER_START,   new SlackNotificationData(ACTUAL_SLACK_TEMPLATE, SLACK_MESSAGE_COLOR_YELLOW));
-        TRIGGER_NOTIFICATION_DATA.put(TRIGGER_SUCCESS, new SlackNotificationData(ACTUAL_SLACK_TEMPLATE, SLACK_MESSAGE_COLOR_GREEN));
-        TRIGGER_NOTIFICATION_DATA.put(TRIGGER_FAILURE, new SlackNotificationData(ACTUAL_SLACK_TEMPLATE, SLACK_MESSAGE_COLOR_RED));
+        TRIGGER_NOTIFICATION_DATA.put(TRIGGER_START,   new SlackNotificationData(SLACK_MESSAGE_TEMPLATE_STARTED, SLACK_MESSAGE_COLOR_YELLOW));
+        TRIGGER_NOTIFICATION_DATA.put(TRIGGER_SUCCESS, new SlackNotificationData(SLACK_MESSAGE_TEMPLATE_SUCCESS, SLACK_MESSAGE_COLOR_GREEN));
+        TRIGGER_NOTIFICATION_DATA.put(TRIGGER_FAILURE, new SlackNotificationData(SLACK_MESSAGE_TEMPLATE_FAILED, SLACK_MESSAGE_COLOR_RED));
 
         try {
             FREEMARKER_CFG.setSetting(Configuration.CACHE_STORAGE_KEY, "strong:20, soft:250");
