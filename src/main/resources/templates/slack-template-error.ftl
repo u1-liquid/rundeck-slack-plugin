@@ -31,8 +31,13 @@
                "value":"<${executionData.job.href}|${jobName}>",
                "short":false
             },
+	    {
+		"title": "Job Start Time",
+		"value": "${executionData.dateStartedW3c}",
+		"short": true
+	    },
             {
-		"title": "Job Completed at",
+		"title": "Job End Time",
 		"value": "${executionData.dateEndedW3c}",
 		"short": true
 	    },

@@ -26,7 +26,12 @@
                "short":false
             },
 	    {
-		"title": "Job Completed At",
+		"title": "Job Start Time",
+		"value": "${executionData.dateStartedW3c}",
+		"short": true
+	    },
+	    {
+		"title": "Job End Time",
 		"value": "${executionData.dateEndedW3c}",
 		"short": true 
 	    },
