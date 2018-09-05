@@ -27,6 +27,7 @@ import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
+import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -161,7 +162,11 @@ public class SlackNotificationPlugin implements NotificationPlugin {
         model.put("config", config);
         final StringWriter writer = new StringWriter();
         try {
-            SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(template).process(model, writer);
+            Template ftl = SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(template);
+            if (this.slack_template != null && !"".equals(this.slack_template)) {
+                ftl = SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(this.slack_template);
+            }
+            ftl.process(model, writer);
         } catch (final TemplateException|IOException ioe) {
             throw new SlackNotificationPluginException(
                 String.format("Exception loading Slack notification message template: [%s]", ioe.getMessage()),
