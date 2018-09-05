@@ -18,6 +18,14 @@ See the [Included Plugins | Rundeck Documentation](http://rundeck.org/docs/plugi
 1. build the source by gradle.
 2. copy jarfile to `$RDECK_BASE/libext`
 
+### build with docker.
+
+```
+$ docker build -t rundeck-slack-incoming-webhook-plugin:latest .
+$ docker run --rm -v `pwd`:/home/rundeck-slack-incoming-webhook-plugin rundeck-slack-incoming-webhook-plugin:latest
+```
+
+it creates `./build/libs/rundeck-slack-incoming-webhook-plugin-0.?.jar`
 
 ## Configuration
 This plugin uses Slack incoming-webhooks. Create a new webhook and copy the provided url.
