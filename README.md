@@ -18,15 +18,24 @@ See the [Included Plugins | Rundeck Documentation](http://rundeck.org/docs/plugi
 1. build the source by gradle.
 2. copy jarfile to `$RDECK_BASE/libext`
 
-
 ## Configuration
-This plugin uses Slack incoming-webhooks. Create a new webhook and copy the provided url.
 
-![configuration](config.png)
+This plugin uses Slack incoming-webhooks. Create a new webhook and copy the provided url.
 
 The only required configuration settings are:
 
-- `WebHook URL`: Slack incoming-webhook URL.
+- `WebHook URL`: Slack incoming-webhook URL. Can be set at either the project level
+   by editing the project properties file, or can be overridden at the notification level
+
+- `Custom template`: Can be used to apply a custom template to a specific notification.
+   The template will be loaded from `/etc/rundeck`
+   
+### Custom notification templates
+
+In case you need to customize the notifications, it's possible to do so by copying the
+default templates from `src/resources/templates` to `/etc/rundeck` on the rundeck server.
+
+The plugin will first try to read the template from `/etc/rundeck` first and, if not found, from itself.
 
 ## Slack message example.
 
