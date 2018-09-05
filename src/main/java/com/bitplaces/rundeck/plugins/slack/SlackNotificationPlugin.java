@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * @author Hayden Bakkum
  */
 @Plugin(service= "Notification", name="SlackNotification")
-@PluginDescription(title="Slack Incoming WebHook", description="Sends Rundeck Notifications to Slack")
+@PluginDescription(title="Slack")
 public class SlackNotificationPlugin implements NotificationPlugin {
 
     private static final Logger LOG = LoggerFactory.getLogger(SlackNotificationPlugin.class);
@@ -72,10 +72,28 @@ public class SlackNotificationPlugin implements NotificationPlugin {
 
     private static final Configuration FREEMARKER_CFG = new Configuration();
 
-    @PluginProperty(title = "WebHook URL", description = "Slack Incoming WebHook URL", scope = PropertyScope.Project)
+    @PluginProperty(
+        title = "WebHook URL",
+        description = "Slack Incoming WebHook URL",
+        scope = PropertyScope.Project,
+        required = true
+    )
     private String webhook_url;
 
-    @PluginProperty(title = "Notification template", description = "Custom notification template, if not supplied the default will be used", scope = PropertyScope.Project)
+    @PluginProperty(
+        title = "WebHook URL Override",
+        description = "Slack Incoming WebHook URL",
+        scope = PropertyScope.InstanceOnly,
+        required = false
+    )
+    private String webhook_url_override;
+
+    @PluginProperty(
+        title = "Notification template",
+        description = "Custom notification template, if not supplied the defaults will be used",
+        scope = PropertyScope.InstanceOnly,
+        required = false
+    )
     private String slack_template;
 
     /**
@@ -163,7 +181,7 @@ public class SlackNotificationPlugin implements NotificationPlugin {
         final StringWriter writer = new StringWriter();
         try {
             Template ftl = SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(template);
-            if (this.slack_template != null && !"".equals(this.slack_template)) {
+            if (this.slack_template != null && !this.slack_template.isEmpty()) {
                 ftl = SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(this.slack_template);
             }
             ftl.process(model, writer);
@@ -177,7 +195,12 @@ public class SlackNotificationPlugin implements NotificationPlugin {
     }
 
     private String invokeSlackAPIMethod(final String message) {
-        final URL url = SlackNotificationPlugin.toURL(this.webhook_url);
+        final URL url;
+        if(this.webhook_url_override !=null && !this.webhook_url_override.isEmpty()) {
+            url = SlackNotificationPlugin.toURL(this.webhook_url_override);
+        } else {
+            url = SlackNotificationPlugin.toURL(this.webhook_url);
+        }
 
         HttpURLConnection connection = null;
         InputStream response = null;
