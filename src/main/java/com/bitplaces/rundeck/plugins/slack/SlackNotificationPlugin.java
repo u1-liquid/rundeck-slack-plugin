@@ -132,10 +132,10 @@ public class SlackNotificationPlugin implements NotificationPlugin {
             SlackNotificationPlugin.FREEMARKER_CFG.setSetting(
                 Configuration.CACHE_STORAGE_KEY, "strong:20, soft:250"
             );
-        } catch (TemplateException e) {
-            System.err.printf("Got a TemplateException from Freemarker: %s", e.getMessage());
-        } catch (IOException e) {
-            System.err.printf("Got a IOException from Freemarker: %s", e.getMessage());
+        } catch (final IOException|TemplateException exc) {
+            SlackNotificationPlugin.LOG.error(
+                "Got an exception from Freemarker: {}", exc.getMessage(), exc
+            );
         }
     }
 
