@@ -31,9 +31,9 @@
                 "short": true
             },
             {
-                "title": "Job End Time",
-                "value": "${executionData.dateEndedW3c}",
-                "short": true
+               "title":"Started By",
+               "value":"${executionData.user}",
+               "short":true
             },
             {
                "title":"Project",
@@ -41,19 +41,9 @@
                "short":true
             },
             {
-               "title":"Started By",
-               "value":"${executionData.user}",
-               "short":true
-            },
-            {
                "title":"Options",
                "value":"${args}",
                "short":false
-            },
-            {
-                "title": "Nodes affected",
-                "value": "${executionData.succeededNodeListString}",
-                "short": false
             }
 	     ]
       }
