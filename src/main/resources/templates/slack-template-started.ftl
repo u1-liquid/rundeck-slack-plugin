@@ -29,16 +29,16 @@
                "short":true
             },
             {
-		"title": "Job Start Time",
-		"value": "${executionData.dateStartedW3c}",
-		"short": true
-	    },
-	    {
-		"title": "Job Status",
-		"value": "Started",
-		"short": true
-	    }
-	]
+                "title": "Job Start Time",
+                "value": "${executionData.dateStartedW3c}",
+                "short": true
+            },
+            {
+                "title": "Job Status",
+                "value": "Started",
+                "short": true
+            }
+         ]
       }
    ]
 }
