@@ -31,41 +31,27 @@
                "value":"<${executionData.job.href}|${jobName}>",
                "short":false
             },
-	    {
-		"title": "Job Start Time",
-		"value": "${executionData.dateStartedW3c}",
-		"short": true
-	    },
             {
-		"title": "Job End Time",
-		"value": "${executionData.dateEndedW3c}",
-		"short": true
-	    },
-	    {	"title": "Project",
-		"value": "${executionData.project}",
-		"short": true
-	    }, 
+                "title": "Job Start Time",
+                "value": "${executionData.dateStartedW3c}",
+                "short": true
+            },
             {
                "title":"Started By",
                "value":"${executionData.user}",
                "short":true
-	    },
+            },
+            {
+                "title": "Project",
+                "value": "${executionData.project}",
+                "short": true
+            },
             {
                "title":"Options",
                "value":"${args}",
                "short":false
-            },
-	    {
-               "title":"Failed On",
-               "value":"${executionData.failedNodeListString}",
-               "short":false
-            },
-	    {
-		"title": "Successful On",
-		"value": "${successNodes}",
-		"short": false
-	    }
-	]
+            }
+	     ]
       }
    ]
 }

@@ -33,8 +33,10 @@ This plugin uses Slack incoming-webhooks. Create a new webhook and copy the prov
 
 The only required configuration settings are:
 
-- `WebHook URL`: Slack incoming-webhook URL. Can be set at either the project level
-   by editing the project properties file, or can be overridden at the notification level
+- `WebHook URL`: Slack incoming-webhook URL. **Must** be set at the project (or global rundeck level)
+   by editing the project properties file. Can be optionally overridden at the notification level.
+   Failing to set this property at the project or rundeck level will prevent the
+   plugin from firing the notification, even if a value is provided at the job level.
 
 - `Custom template`: Can be used to apply a custom template to a specific notification.
    The template will be loaded from `/etc/rundeck`
