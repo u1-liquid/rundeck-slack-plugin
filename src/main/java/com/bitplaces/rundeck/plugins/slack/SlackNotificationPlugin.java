@@ -29,12 +29,10 @@ import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -42,16 +40,14 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Sends Rundeck job notification messages to a Slack room.
  *
  * @author Hayden Bakkum
  */
-@Plugin(service= "Notification", name="SlackNotification")
-@PluginDescription(title="Slack")
+@Plugin(service = "Notification", name = "SlackNotification")
+@PluginDescription(title = "Slack")
 public class SlackNotificationPlugin implements NotificationPlugin {
 
     private static final Logger LOG = LoggerFactory.getLogger(SlackNotificationPlugin.class);
@@ -132,92 +128,10 @@ public class SlackNotificationPlugin implements NotificationPlugin {
             SlackNotificationPlugin.FREEMARKER_CFG.setSetting(
                 Configuration.CACHE_STORAGE_KEY, "strong:20, soft:250"
             );
-        } catch (final IOException|TemplateException exc) {
+        } catch (final IOException | TemplateException exc) {
             SlackNotificationPlugin.LOG.error(
                 "Got an exception from Freemarker: {}", exc.getMessage(), exc
             );
-        }
-    }
-
-    /**
-     * Sends a message to a Slack room when a job notification event is raised by Rundeck.
-     *
-     * @param trigger name of job notification event causing notification
-     * @param executionData job execution data
-     * @param config plugin configuration
-     * @throws SlackNotificationPluginException when any error occurs sending the Slack message
-     * @return true, if the Slack API response indicates a message was successfully delivered to a chat room
-     */
-    public boolean postNotification(final String trigger, final Map executionData, final Map config) {
-        if (!SlackNotificationPlugin.TRIGGER_NOTIFICATION_DATA.containsKey(trigger)) {
-            throw new IllegalArgumentException(
-                String.format("Unknown trigger type: [%s].", trigger)
-            );
-        }
-        final String message = this.generateMessage(trigger, executionData, config);
-        final String response = this.invokeSlackAPIMethod(message);
-        final boolean result = "ok".equals(response);
-        if (!result) {
-            SlackNotificationPlugin.LOG.error(
-                String.format(
-                    "Unknown status returned from Slack API: [%s].\npayload=%s",
-                    response,
-                    SlackNotificationPlugin.urlEncode(message)
-                )
-            );
-        }
-        return result;
-    }
-
-    private String generateMessage(final String trigger, final Map executionData, final Map config) {
-        final String template = SlackNotificationPlugin.TRIGGER_NOTIFICATION_DATA.get(trigger).template;
-        final String color = SlackNotificationPlugin.TRIGGER_NOTIFICATION_DATA.get(trigger).color;
-
-        final Map<String, Object> model = new HashMap<String, Object>();
-        model.put("trigger", trigger);
-        model.put("color", color);
-        model.put("executionData", executionData);
-        model.put("config", config);
-        final StringWriter writer = new StringWriter();
-        try {
-            Template ftl = SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(template);
-            if (this.slack_template != null && !this.slack_template.isEmpty()) {
-                ftl = SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(this.slack_template);
-            }
-            ftl.process(model, writer);
-        } catch (final TemplateException|IOException ioe) {
-            throw new SlackNotificationPluginException(
-                String.format("Exception loading Slack notification message template: [%s]", ioe.getMessage()),
-                ioe
-            );
-        }
-        return writer.toString();
-    }
-
-    private String invokeSlackAPIMethod(final String message) {
-        final URL url;
-        if(this.webhook_url_override !=null && !this.webhook_url_override.isEmpty()) {
-            url = SlackNotificationPlugin.toURL(this.webhook_url_override);
-        } else {
-            url = SlackNotificationPlugin.toURL(this.webhook_url);
-        }
-
-        HttpURLConnection connection = null;
-        InputStream response = null;
-        final String body = String.format(
-            "payload=%s",
-            SlackNotificationPlugin.urlEncode(message)
-        );
-        try {
-            connection = SlackNotificationPlugin.openConnection(url);
-            SlackNotificationPlugin.putRequestStream(connection, body);
-            response = this.getResponseStream(connection);
-            return this.getSlackResponse(response);
-        } finally {
-            this.closeQuietly(response);
-            if (connection != null) {
-                connection.disconnect();
-            }
         }
     }
 
@@ -269,6 +183,88 @@ public class SlackNotificationPlugin implements NotificationPlugin {
         }
     }
 
+    /**
+     * Sends a message to a Slack room when a job notification event is raised by Rundeck.
+     *
+     * @param trigger       name of job notification event causing notification
+     * @param executionData job execution data
+     * @param config        plugin configuration
+     * @return true, if the Slack API response indicates a message was successfully delivered to a chat room
+     * @throws SlackNotificationPluginException when any error occurs sending the Slack message
+     */
+    public boolean postNotification(final String trigger, final Map executionData, final Map config) {
+        if (!SlackNotificationPlugin.TRIGGER_NOTIFICATION_DATA.containsKey(trigger)) {
+            throw new IllegalArgumentException(
+                String.format("Unknown trigger type: [%s].", trigger)
+            );
+        }
+        final String message = this.generateMessage(trigger, executionData, config);
+        final String response = this.invokeSlackAPIMethod(message);
+        final boolean result = "ok".equals(response);
+        if (!result) {
+            SlackNotificationPlugin.LOG.error(
+                String.format(
+                    "Unknown status returned from Slack API: [%s].\npayload=%s",
+                    response,
+                    SlackNotificationPlugin.urlEncode(message)
+                )
+            );
+        }
+        return result;
+    }
+
+    private String generateMessage(final String trigger, final Map executionData, final Map config) {
+        final String template = SlackNotificationPlugin.TRIGGER_NOTIFICATION_DATA.get(trigger).template;
+        final String color = SlackNotificationPlugin.TRIGGER_NOTIFICATION_DATA.get(trigger).color;
+
+        final Map<String, Object> model = new HashMap<String, Object>();
+        model.put("trigger", trigger);
+        model.put("color", color);
+        model.put("executionData", executionData);
+        model.put("config", config);
+        final StringWriter writer = new StringWriter();
+        try {
+            Template ftl = SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(template);
+            if (this.slack_template != null && !this.slack_template.isEmpty()) {
+                ftl = SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(this.slack_template);
+            }
+            ftl.process(model, writer);
+        } catch (final TemplateException | IOException ioe) {
+            throw new SlackNotificationPluginException(
+                String.format("Exception loading Slack notification message template: [%s]", ioe.getMessage()),
+                ioe
+            );
+        }
+        return writer.toString();
+    }
+
+    private String invokeSlackAPIMethod(final String message) {
+        final URL url;
+        if (this.webhook_url_override != null && !this.webhook_url_override.isEmpty()) {
+            url = SlackNotificationPlugin.toURL(this.webhook_url_override);
+        } else {
+            url = SlackNotificationPlugin.toURL(this.webhook_url);
+        }
+
+        HttpURLConnection connection = null;
+        InputStream response = null;
+        final String body = String.format(
+            "payload=%s",
+            SlackNotificationPlugin.urlEncode(message)
+        );
+        try {
+            connection = SlackNotificationPlugin.openConnection(url);
+            SlackNotificationPlugin.putRequestStream(connection, body);
+            response = this.getResponseStream(connection);
+            return this.getSlackResponse(response);
+        } finally {
+            this.closeQuietly(response);
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
     private InputStream getResponseStream(HttpURLConnection connection) {
         InputStream input = null;
         try {
@@ -281,7 +277,7 @@ public class SlackNotificationPlugin implements NotificationPlugin {
 
     private String getSlackResponse(InputStream responseStream) {
         try {
-            return new Scanner(responseStream,"UTF-8").useDelimiter("\\A").next();
+            return new Scanner(responseStream, "UTF-8").useDelimiter("\\A").next();
         } catch (Exception ioEx) {
             throw new SlackNotificationPluginException("Error reading Slack API JSON response: [" + ioEx.getMessage() + "].", ioEx);
         }
@@ -300,6 +296,7 @@ public class SlackNotificationPlugin implements NotificationPlugin {
     private static class SlackNotificationData {
         private String template;
         private String color;
+
         public SlackNotificationData(String template, String color) {
             this.color = color;
             this.template = template;
