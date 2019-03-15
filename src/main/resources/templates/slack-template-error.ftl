@@ -20,6 +20,15 @@
 </#if>
 
 {
+<#if channel_override?has_content >
+    "channel":"${channel_override}",
+</#if>
+<#if username_override?has_content >
+    "username": "${username_override}",
+</#if>
+<#if icon_override?has_content >
+    "icon_emoji":"${icon_override}",
+</#if>
    "attachments":[
       {
          "fallback":"${state}: ${message}",
