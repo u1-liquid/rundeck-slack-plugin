@@ -85,10 +85,34 @@ public class SlackNotificationPlugin implements NotificationPlugin {
     private String webhook_url_override;
 
     @PluginProperty(
-        title = "Notification template",
-        description = "Custom notification template, if not supplied the defaults will be used",
-        scope = PropertyScope.InstanceOnly,
-        required = false
+            title = "Notification channel Override",
+            description = "Notification channel",
+            scope = PropertyScope.InstanceOnly,
+            required = false
+    )
+    private String slack_channel_override;
+
+    @PluginProperty(
+            title = "Notification username Override",
+            description = "Notification username",
+            scope = PropertyScope.InstanceOnly,
+            required = false
+    )
+    private String slack_username_override;
+
+    @PluginProperty(
+            title = "Notification icon Override",
+            description = "Notification icon",
+            scope = PropertyScope.InstanceOnly,
+            required = false
+    )
+    private String slack_icon_override;
+
+    @PluginProperty(
+            title = "Notification template",
+            description = "Custom notification template, if not supplied the defaults will be used",
+            scope = PropertyScope.InstanceOnly,
+            required = false
     )
     private String slack_template;
 
@@ -222,6 +246,10 @@ public class SlackNotificationPlugin implements NotificationPlugin {
         model.put("color", color);
         model.put("executionData", executionData);
         model.put("config", config);
+        model.put("channel_override", this.slack_channel_override);
+        model.put("username_override", this.slack_username_override);
+        model.put("icon_override", this.slack_icon_override);
+
         final StringWriter writer = new StringWriter();
         try {
             Template ftl = SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(template);
