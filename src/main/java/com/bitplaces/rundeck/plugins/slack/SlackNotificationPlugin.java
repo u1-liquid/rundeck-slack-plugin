@@ -85,28 +85,28 @@ public class SlackNotificationPlugin implements NotificationPlugin {
     private String webhook_url_override;
 
     @PluginProperty(
-            title = "Notification channel Override",
+            title = "Notification channel",
             description = "Notification channel",
-            scope = PropertyScope.InstanceOnly,
+            scope = PropertyScope.Instance,
             required = false
     )
-    private String slack_channel_override;
+    private String channel;
 
     @PluginProperty(
-            title = "Notification username Override",
+            title = "Notification username",
             description = "Notification username",
-            scope = PropertyScope.InstanceOnly,
+            scope = PropertyScope.Instance,
             required = false
     )
-    private String slack_username_override;
+    private String username;
 
     @PluginProperty(
-            title = "Notification icon Override",
+            title = "Notification icon",
             description = "Notification icon",
-            scope = PropertyScope.InstanceOnly,
+            scope = PropertyScope.Instance,
             required = false
     )
-    private String slack_icon_override;
+    private String icon_url;
 
     @PluginProperty(
             title = "Notification template",
@@ -114,7 +114,7 @@ public class SlackNotificationPlugin implements NotificationPlugin {
             scope = PropertyScope.InstanceOnly,
             required = false
     )
-    private String slack_template;
+    private String template;
 
     /**
      * Ctor.
@@ -246,15 +246,15 @@ public class SlackNotificationPlugin implements NotificationPlugin {
         model.put("color", color);
         model.put("executionData", executionData);
         model.put("config", config);
-        model.put("channel_override", this.slack_channel_override);
-        model.put("username_override", this.slack_username_override);
-        model.put("icon_override", this.slack_icon_override);
+        model.put("channel", this.channel);
+        model.put("username", this.username);
+        model.put("icon_url", this.icon_url);
 
         final StringWriter writer = new StringWriter();
         try {
             Template ftl = SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(template);
-            if (this.slack_template != null && !this.slack_template.isEmpty()) {
-                ftl = SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(this.slack_template);
+            if (this.template != null && !this.template.isEmpty()) {
+                ftl = SlackNotificationPlugin.FREEMARKER_CFG.getTemplate(this.template);
             }
             ftl.process(model, writer);
         } catch (final TemplateException | IOException ioe) {

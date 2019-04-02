@@ -14,14 +14,14 @@
 <#assign state="Succeeded">
 
 {
-<#if channel_override?has_content >
-   "channel":"${channel_override}",
+<#if channel?has_content >
+   "channel":"${channel}",
 </#if>
-<#if username_override?has_content >
-   "username": "${username_override}",
+<#if username?has_content >
+   "username": "${username}",
 </#if>
-<#if icon_override?has_content >
-   "icon_emoji":"${icon_override}",
+<#if icon_url?has_content >
+   "icon_emoji":"${icon_url}",
 </#if>
    "attachments":[
       {
