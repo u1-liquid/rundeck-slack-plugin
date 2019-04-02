@@ -7,15 +7,9 @@
 <#assign state="Started">
 
 {
-<#if channel?has_content >
-   "channel":"${channel}",
-</#if>
-<#if username?has_content >
-   "username": "${username}",
-</#if>
-<#if icon_url?has_content >
-   "icon_emoji":"${icon_url}",
-</#if>
+<#if  (channel)?has_content> "channel":"${channel}",</#if>
+<#if (username)?has_content>"username":"${username}",</#if>
+<#if (icon_url)?has_content>"icon_url":"${icon_url}",<#else>"icon_emoji": ":rundeck:",</#if>
    "attachments":[
       {
          "fallback":"${state}: ${message}",
