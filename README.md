@@ -1,4 +1,4 @@
-rundeck-slack-incoming-webhook-plugin
+rundeck-slack-plugin
 ======================
 
 Sends rundeck notification messages to a slack channel.  This plugin  is based on [rundeck-slack-plugin](https://github.com/bitplaces/rundeck-slack-plugin)(based on run-hipchat-plugin).
@@ -10,7 +10,7 @@ See the [Included Plugins | Rundeck Documentation](http://rundeck.org/docs/plugi
 
 ## Download jarfile
 
-1. Download jarfile from [releases](https://github.com/higanworks/rundeck-slack-incoming-webhook-plugin/releases).
+1. Download jarfile from [releases](https://github.com/u1-liquid/rundeck-slack-plugin/releases).
 2. copy jarfile to `$RDECK_BASE/libext`
 
 ## Build
@@ -21,11 +21,11 @@ See the [Included Plugins | Rundeck Documentation](http://rundeck.org/docs/plugi
 ### build with docker.
 
 ```
-$ docker build -t rundeck-slack-incoming-webhook-plugin:latest .
-$ docker run --rm -v `pwd`:/home/rundeck-slack-incoming-webhook-plugin rundeck-slack-incoming-webhook-plugin:latest
+$ docker build -t rundeck-slack-plugin:latest .
+$ docker run --rm -v `pwd`:/home/rundeck-slack-plugin rundeck-slack-plugin:latest
 ```
 
-it creates `./build/libs/rundeck-slack-incoming-webhook-plugin-0.?.jar`
+it creates `./build/libs/rundeck-slack-plugin-0.?.jar`
 
 ## Configuration
 
@@ -36,7 +36,7 @@ The only required configuration settings are:
 - `WebHook URL`: Slack incoming-webhook URL. **Must** be set at the project (or global rundeck level)
    by editing the project properties file, either by going to `YOUR PROJECT > Project Settings > Edit Configuration > Edit Configuration File` and adding the webhook URL as show below:
 
-   ![configuration page](configuration.png)
+   ![configuration page](images/configuration.png)
 
    Or from your terminal to `/var/rundeck/projects/YOUR_PROJECT/etc/project.properties`. 
    
@@ -57,11 +57,11 @@ The plugin will first try to read the template from `/etc/rundeck` first and, if
 
 On success.
 
-![on success](on_success.png)
+![on success](images/on_success.png)
 
 On failure.
 
-![on failure](on_failure.png)
+![on failure](images/on_failure.png)
 
 ## Contributors
 *  Original [hbakkum/rundeck-hipchat-plugin](https://github.com/hbakkum/rundeck-hipchat-plugin) author: Hayden Bakkum @hbakkum

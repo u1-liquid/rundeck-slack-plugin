@@ -1,4 +1,4 @@
 FROM openjdk:8
 
-WORKDIR /home/rundeck-slack-incoming-webhook-plugin
+WORKDIR /home/rundeck-slack-plugin
 CMD ["bash", "./gradlew"]
